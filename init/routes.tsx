@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import React from 'react';
+// DO NOT REMOVE ~IMPORT~
 
 const Home = React.lazy(() => import('@pages/Home'));
 
@@ -17,5 +18,5 @@ export const routes: Route[] = [
     isIndex: true,
     component: <Home />
   }
-  // DO NOT REMOVE
+  // DO NOT REMOVE ~INTERNAL~
 ];

@@ -11,6 +11,23 @@ const createInterface = () => {
   });
 };
 
+const INDEX_ROUTE = (
+  name,
+  joinedName,
+  path,
+  isIndex,
+  policy
+) => `const ${name} = React.lazy(() => import('@pages/${joinedName}'));
+
+export const route_${name} =  {
+    path: '${path}',
+    isIndex: ${isIndex},
+    component: <${name} />,
+    children: null,
+    policy: ${policy || null}
+}
+`;
+
 const askQuestion = (rl, question) => {
   return new Promise(resolve => {
     rl.question(question, answer => {
@@ -31,9 +48,43 @@ const main = async () => {
     );
   } else {
     const rl = createInterface();
-    const routeName = await askQuestion(rl, 'Route name: ');
+    const name = await askQuestion(rl, 'Route name: ');
+    const policy = await askQuestion(rl, 'Policy name: ');
+    const isIndex = await askQuestion(rl, 'Is index (y/n): ').then(
+      data => data.toLowerCase() === 'y'
+    );
+    const path = await askQuestion(rl, 'Path: ');
+    fs.mkdirSync(`src/routes/${name}`, { recursive: true }, err => {
+      if (err) throw err;
+    });
+    fs.writeFile(
+      `src/routes/${name}/index.tsx`,
+      INDEX_ROUTE(name, name, path, isIndex, policy),
+      err => {
+        // In case of a error throw err.
+        if (err) throw err;
+      }
+    );
+    fs.readFile('src/routes/routes.tsx', 'utf-8', (err, contents) => {
+      if (err) {
+        return console.error(err);
+      }
+      const updated = contents
+        .replace(
+          '// DO NOT REMOVE ~IMPORT~',
+          `import { route_${name} } from './${name}';\n// DO NOT REMOVE ~IMPORT~`
+        )
+        .replace(
+          '// DO NOT REMOVE ~INTERNAL~',
+          `, route_${name}\n// DO NOT REMOVE ~INTERNAL~`
+        );
+      fs.writeFile('src/routes/routes.tsx', updated, 'utf-8', err2 => {
+        if (err2) {
+          console.log(err2);
+        }
+      });
+    });
     rl.close();
-    console.log(routeName);
   }
 };
 
