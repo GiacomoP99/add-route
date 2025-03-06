@@ -1,7 +1,7 @@
 import Forbidden from "@pages/Forbidden";
 import NotFound from "@pages/NotFound";
 import React, { Suspense } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router";
 
 const AuthenticatedRoutes = React.lazy(() => import("./AuthenticatedRoutes"));
 

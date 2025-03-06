@@ -1,4 +1,3 @@
-import routes from "./routes-const";
 import { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 
@@ -9,7 +8,7 @@ interface ProtectRouteProps {
 
 const ProtectRoute = ({ canNavigate, children }: ProtectRouteProps) => {
   return (
-    <>{canNavigate ? children : <Navigate replace to={routes.FORBIDDEN} />}</>
+    <>{canNavigate ? children : <Navigate replace to={'/forbidden'} />}</>
   );
 };
 
